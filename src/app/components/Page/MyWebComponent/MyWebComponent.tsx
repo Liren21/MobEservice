@@ -1,12 +1,28 @@
 import * as React from 'react';
 import {observer} from "mobx-react";
-import 'react-native-get-random-values'
 import WebView from "react-native-webview";
 
-import {ActivityIndicator, StyleSheet} from "react-native";
+import {ActivityIndicator, BackHandler, StyleSheet} from "react-native";
+import {useEffect, useRef, useState} from "react";
 
 
 export default observer(() => {
+    const webViewRef = useRef(null)
+    const [canGoBack, setCanGoBack] = useState(false)
+    const [canGoForward, setCanGoForward] = useState(false)
+    const [currentUrl, setCurrentUrl] = useState('https://liren21.github.io/#/')
+
+    const backActive = () => {
+        if (canGoBack) {
+            webViewRef.current.goBack()
+        }
+        return true
+    }
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', backActive);
+        () => BackHandler.removeEventListener('hardwareBackPress', backActive)
+    }, [canGoBack])
 
     const Loading = () => <ActivityIndicator
         style={[styles.container, styles.horizontal]}
@@ -14,14 +30,22 @@ export default observer(() => {
         size={'large'}
     />
     return (
-
-        <WebView source={{uri: 'https://eservice.omsu.ru/#'}}
-                 startInLoadingState
-                 renderLoading={Loading}/>
+        <WebView
+            ref={webViewRef}
+            source={{uri: currentUrl}}
+            startInLoadingState
+            renderLoading={Loading}
+            onNavigationStateChange={
+                navState => {
+                    setCanGoBack(navState.canGoBack)
+                    setCanGoForward(navState.canGoForward)
+                    setCurrentUrl(navState.url)
+                }
+            }
+        />
 
     );
 })
-
 
 
 const styles = StyleSheet.create({
