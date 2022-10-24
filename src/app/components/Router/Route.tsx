@@ -12,13 +12,12 @@ export default observer(() => {
 
     return (
         <NavigationContainer>
-            <StatusBar/>
             <Stack.Navigator>
                 <Stack.Screen name={'Займ'} options={{
                     title: '',
                     gestureEnabled: false,
                     headerStyle: {
-                        backgroundColor: 'rgb(217,214,254)',
+                        backgroundColor: 'rgba(217,214,254,0)',
                     }, headerShown: false
                 }} component={MyWebComponent}/>
             </Stack.Navigator>
